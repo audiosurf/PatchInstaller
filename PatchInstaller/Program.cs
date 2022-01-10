@@ -1,7 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using Gameloop.Vdf;
-using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
 using System.IO.Compression;
 
@@ -9,7 +7,7 @@ string Location = "";
 
 Console.Title = "Audiosurf 2 Community Patch Installer";
 
-Console.WriteLine("First we need the directory where Audiosurf2 is installed");
+Console.WriteLine("First we need the directory where Audiosurf 2 is installed");
 Console.WriteLine("----------");
 Console.WriteLine("Your options are");
 Console.WriteLine("1) AutoFind the Directory");
@@ -32,19 +30,24 @@ else if (selected == "1")
     {
         try
         {
+            //GameID: 235800
             object? steamPath = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam", "InstallPath", null);
             if (steamPath == null)
                 return;
-            var vdfText = await File.ReadAllTextAsync(Path.Combine(steamPath.ToString() ?? throw new InvalidOperationException(), "config\\libraryfolders.vdf"));
-            var librariesVdf = VdfConvert.Deserialize(vdfText);
-            var libraries = librariesVdf.Value.Children().Where(x => int.TryParse(x.Value<VProperty>().Key, out _));
-
-            var basePath = (libraries.FirstOrDefault(x => x.Value<VProperty>().Value.Children()
-                    .FirstOrDefault(y => y.Value<VProperty>().Key == "apps")?.Value<VProperty>().Value.Children()
-                    .Any(y => y.Value<VProperty>().Key == "235800") == true) ?? throw new Exception("Game location not found!")).Value<VProperty>().Value.Children()
-                .FirstOrDefault(x => x.Value<VProperty>().Key == "path")?.Value<VProperty>().Value;
-
-            if (basePath != null) Location = Path.Combine(basePath.ToString(), "steamapps\\common\\Audiosurf2");
+            var vdfText = await File.ReadAllLinesAsync(Path.Combine(steamPath.ToString() ?? throw new InvalidOperationException(), "config\\libraryfolders.vdf"));
+            var gameLineText = vdfText.FirstOrDefault(x => x.Contains("\"235800\"")) ?? throw new DirectoryNotFoundException();
+            var lineIndex = Array.IndexOf(vdfText, gameLineText);
+            for (int i = lineIndex - 1; i >= 0; i--)
+            {
+                if (vdfText[i].Contains("\"path\""))
+                {
+                    vdfText[i] = vdfText[i].Replace("\"path\"", "");
+                    var libraryPath = vdfText[i][(vdfText[i].IndexOf('\"') + 1) .. vdfText[i].LastIndexOf('\"')];
+                    libraryPath = libraryPath.Replace("\\\\", "\\");
+                    Location = Path.Combine(libraryPath, "steamapps\\common\\Audiosurf 2");
+                    break;
+                }
+            }
         }
         catch (Exception e)
         {
@@ -85,5 +88,5 @@ var latest = await client.GetStreamAsync("https://aiae.ovh/brownie/audiosurf2_up
 var archive = new ZipArchive(latest);
 Console.WriteLine("Extracting files...");
 archive.ExtractToDirectory(Location, true);
-Console.WriteLine("Installtion complete, have fun :)");
+Console.WriteLine("Installation complete, have fun :)");
 Console.ReadLine();
