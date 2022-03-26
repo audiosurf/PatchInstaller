@@ -132,7 +132,7 @@ Console.ReadLine();
 Console.Clear();
 var client = new HttpClient();
 Console.WriteLine("Downloading files...");
-var latest = await client.GetStreamAsync("https://aiae.ovh/brownie/audiosurf2_updater.zip");
+var latest = await client.GetStreamAsync("https://files.audiosurf2.info/newpatch/audiosurf2_community_patch.zip");
 var archive = new ZipArchive(latest);
 Console.WriteLine("Extracting files...");
 archive.ExtractToDirectory(location, true);
