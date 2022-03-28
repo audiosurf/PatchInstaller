@@ -15,7 +15,6 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <ApplicationIcon>exo_font.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>SekoKey.snk</AssemblyOriginatorKeyFile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -112,7 +111,6 @@
     </Compile>
     <None Include="exo_font.ico" />
     <None Include="packages.config" />
-    <None Include="PatchInstallerUI_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -123,7 +121,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="SekoKey.snk" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
